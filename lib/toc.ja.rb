@@ -85,8 +85,8 @@ section 'configuration', 'Configuration' do
       }).join(" ")
     end 
   end
-  category 'high-availability', 'High Availability' do
-    article 'high-availability', 'Fluentd High Availability Configuration'
+  category 'high-availability', '高可用性' do
+    article 'high-availability', 'Fluentd高可用性構成'
   end
   category 'failure-scenarios', '障害のシナリオ' do
     article 'failure-scenarios', '障害のシナリオ'
