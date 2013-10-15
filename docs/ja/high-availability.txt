@@ -4,21 +4,30 @@
 
 ## Message Delivery Semantics
 
-Fluentd is designed primarily for event-log delivery systems.
+Fluentd is designed primarily for event-log delivery systems.  
+Fluentdは主にイベントログ配信システム用に設計されています。
 
-In such systems, several delivery guarantees are possible:
+In such systems, several delivery guarantees are possible:  
+このようなシステムでは、いくつかの配信を保証する方法があります。
 
 * *At most once*: Messages are immediately transferred. If the transfer succeeds, the message is never sent out again. However, many failure scenarios can cause lost messages (ex: no more write capacity)
+* *At most once*: メッセージは直ちに転送されます。転送が成功した場合、メッセージが再送信されることはありません。しかし多くの障害のシナリオではメッセージが失われます(例:書き込み先の空き容量が不足した場合)。
 * *At least once*: Each message is delivered at least once. In failure cases, messages may be delivered twice.
+* *At least once*: 各メッセージは少なくとも1回配信されます。障害が発生した場合、メッセージは2回配信されます。
 * *Exactly once*: Each message is delivered once and only once. This is what people want.
+* *Exactly once*: 各メッセージはただ1度だけ配信されます。これはもっとも望ましい方法です。
 
-If the system "can't lose a single event", and must also transfer "*exactly once*", then the system must stop ingesting events when it runs out of write capacity. The proper approach would be to use synchronous logging and return errors when the event cannot be accepted. 
+If the system "can't lose a single event", and must also transfer "*exactly once*", then the system must stop ingesting events when it runs out of write capacity. The proper approach would be to use synchronous logging and return errors when the event cannot be accepted.   
+システムにおいて"1件のイベントを失うことも許され"ず、かつ"*ただ1度だけ*"転送する必要があり、そして書き込み先の空き容量が不足した場合には、イベント収集を停止する必要があります。適切なアプローチは、ロギングを同期し、イベントを受け付けられない場合にはエラーを返すことです。
 
-That's why *Fluentd guarantees 'At most once' transfers*. In order to collect massive amounts of data without impacting application performance, a data logger must transfer data asynchronously. This improves performance at the cost of potential delivery failures.
+That's why *Fluentd guarantees 'At most once' transfers*. In order to collect massive amounts of data without impacting application performance, a data logger must transfer data asynchronously. This improves performance at the cost of potential delivery failures.  
+だからこそ *Fluentdは転送をかつてないほど保証します* 。アプリケーションの性能に影響を与えることなく、大量のデータを収集するために、データロガーはデータを非同期に転送する必要があります。これは配信障害の可能性において性能が向上します。
 
-However, most failure scenarios are preventable. The following sections describe how to set up Fluentd's topology for high availability.
+However, most failure scenarios are preventable. The following sections describe how to set up Fluentd's topology for high availability.  
+とはいえ、ほとんどの障害シナリオは予防できます。以降のセクションでは高可溶性を実現するためにFluentdのトポロジをセットアップする方法について説明します。
 
 ## Network Topology
+## ネットワークトポロジー
 
 To configure Fluentd for high availability, we assume that your network consists of '*log forwarders*' and '*log aggregators*'.
 
